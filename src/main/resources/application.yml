@@ -1,12 +1,28 @@
+server:
+  port: 8080
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5433/coffee_auth
-    username: postgres
-    password: admin
+    username: coffee_user
+    password: coffee_pass
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
+
+security:
+    jwt:
+      secret: 8bf603b9f4dbacc022a86f15c6ad975dd89f1c08d0f2b2b041ac8592e4676ea46e4454b6224dfac0b19e47ac0f32662943eb9d735e2ec5544bbb2beaa95317e8
+      access-expiration: 900000
+      refresh-expiration: 604800000
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+

@@ -1,6 +1,6 @@
 package com.coffecommerce.auth_service.repository;
 
-import com.coffecommerce.auth_service.entity.User;
+import com.coffecommerce.auth_service.data.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

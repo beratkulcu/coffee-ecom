@@ -1,6 +1,6 @@
 package com.coffecommerce.auth_service.security;
 
-import com.coffecommerce.auth_service.entity.User;
+import com.coffecommerce.auth_service.data.entity.User;
 import com.coffecommerce.auth_service.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

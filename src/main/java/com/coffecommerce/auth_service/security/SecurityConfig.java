@@ -30,7 +30,7 @@ public class SecurityConfig {
                                 "/webjars/**",
                                 "/h2-console/**"
                         ).permitAll()
-                        .requestMatchers("/api/v1/auth/**", "/api/v1/user/auth/**").permitAll()
+                        .requestMatchers("/api/v1/auth/**", "/api/v1/user/auth/**", "/api/v1/seller/auth/**").permitAll()
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/seller/**").hasRole("SELLER")
                         .requestMatchers("/api/v1/user/**").hasRole("USER")

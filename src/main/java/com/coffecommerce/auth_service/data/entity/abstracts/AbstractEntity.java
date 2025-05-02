@@ -1,4 +1,4 @@
-package com.coffecommerce.auth_service.entity.abstracts;
+package com.coffecommerce.auth_service.data.entity.abstracts;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;

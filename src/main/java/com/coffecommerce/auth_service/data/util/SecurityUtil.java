@@ -13,6 +13,7 @@ public class SecurityUtil {
 
     public boolean isAuthenticatedUser(String username) {
         String currentUser = getCurrentUserName();
-        return currentUser != null && !currentUser.equals(username);
+        return currentUser != null && currentUser.equals(username); // ✅ doğru kıyas
     }
+
 }

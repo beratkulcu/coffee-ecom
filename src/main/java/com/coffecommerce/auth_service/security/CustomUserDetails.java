@@ -1,6 +1,6 @@
 package com.coffecommerce.auth_service.security;
 
-import com.coffecommerce.auth_service.entity.User;
+import com.coffecommerce.auth_service.data.entity.User;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

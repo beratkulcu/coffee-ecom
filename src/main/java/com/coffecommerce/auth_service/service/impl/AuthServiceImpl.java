@@ -1,19 +1,18 @@
 package com.coffecommerce.auth_service.service.impl;
 
 import com.coffecommerce.auth_service.constans.ApiResponse;
+import com.coffecommerce.auth_service.data.entity.Seller;
 import com.coffecommerce.auth_service.data.enums.RefreshTokenStatus;
-import com.coffecommerce.auth_service.data.request.LoginRequest;
-import com.coffecommerce.auth_service.data.request.RefreshTokenRequest;
-import com.coffecommerce.auth_service.data.request.RegisterRequest;
+import com.coffecommerce.auth_service.data.request.*;
 import com.coffecommerce.auth_service.data.response.AuthResponse;
-import com.coffecommerce.auth_service.entity.RefreshToken;
-import com.coffecommerce.auth_service.entity.Role;
-import com.coffecommerce.auth_service.entity.User;
-import com.coffecommerce.auth_service.data.enums.ActivityStatus;
+import com.coffecommerce.auth_service.data.entity.RefreshToken;
+import com.coffecommerce.auth_service.data.entity.Role;
+import com.coffecommerce.auth_service.data.entity.User;
 import com.coffecommerce.auth_service.data.enums.RoleType;
 import com.coffecommerce.auth_service.exception.AppException;
 import com.coffecommerce.auth_service.repository.RefreshTokenRepository;
 import com.coffecommerce.auth_service.repository.RoleRepository;
+import com.coffecommerce.auth_service.repository.SellerRepository;
 import com.coffecommerce.auth_service.repository.UserRepository;
 import com.coffecommerce.auth_service.security.JwtTokenProvider;
 import com.coffecommerce.auth_service.service.AuthService;
@@ -26,6 +25,8 @@ import org.springframework.stereotype.Service;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.coffecommerce.auth_service.data.enums.ActivityStatus.ACTIVE;
+
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -35,6 +36,7 @@ public class AuthServiceImpl implements AuthService {
     private final RoleRepository roleRepository;
     private final RefreshTokenService refreshTokenService;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final SellerRepository sellerRepository;
 
 
     @Override
@@ -59,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .phone(request.phoneNumber())
-                .userActivityStatus(ActivityStatus.ACTIVE)
+                .userActivityStatus(ACTIVE)
                 .isEnabled(true)
                 .roles(Set.of(userRole))
                 .build();
@@ -145,7 +147,7 @@ public class AuthServiceImpl implements AuthService {
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .phone(request.phoneNumber())
-                .userActivityStatus(ActivityStatus.ACTIVE)
+                .userActivityStatus(ACTIVE)
                 .isEnabled(true)
                 .roles(Set.of(role))
                 .build();
@@ -158,4 +160,43 @@ public class AuthServiceImpl implements AuthService {
         return ApiResponse.success(new AuthResponse(accessToken, refreshToken));
     }
 
+    @Override
+    public ApiResponse<AuthResponse> registerSeller(SellerRegisterRequest request) {
+        if (sellerRepository.existsByEmail(request.email())) {
+            throw new AppException("Email already in use");
+        }
+
+        Seller seller = Seller.builder()
+                .firstName(request.firstName())
+                .lastName(request.lastName())
+                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
+                .phoneNumber(request.phoneNumber())
+                .storeName(request.storeName())
+                .storeDescription(request.storeDescription())
+                .sellerActivityStatus(ACTIVE)
+                .build();
+
+        sellerRepository.save(seller);
+
+        String accessToken = jwtTokenProvider.generateAccessToken(seller.getEmail(), Set.of(RoleType.SELLER.name()));
+        String refreshToken = refreshTokenService.generateRefreshTokenSeller(seller).getToken();
+
+        return ApiResponse.success(new AuthResponse(accessToken, refreshToken));
+    }
+
+    @Override
+    public ApiResponse<AuthResponse> loginSeller(SellerLoginRequest request) {
+        Seller seller = sellerRepository.findByEmail(request.email())
+                .orElseThrow(() -> new AppException("Seller not found"));
+
+        if (!passwordEncoder.matches(request.password(), seller.getPassword())) {
+            throw new AppException("Invalid password");
+        }
+
+        String accessToken = jwtTokenProvider.generateAccessToken(seller.getEmail(), Set.of(RoleType.SELLER.name()));
+        String refreshToken = jwtTokenProvider.generateRefreshToken(seller.getEmail(), Set.of(RoleType.SELLER.name()));
+
+        return ApiResponse.success(new AuthResponse(accessToken, refreshToken));
+    }
 }

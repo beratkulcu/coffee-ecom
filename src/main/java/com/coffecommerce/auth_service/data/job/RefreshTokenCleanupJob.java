@@ -1,7 +1,7 @@
 package com.coffecommerce.auth_service.data.job;
 
 import com.coffecommerce.auth_service.data.enums.RefreshTokenStatus;
-import com.coffecommerce.auth_service.entity.RefreshToken;
+import com.coffecommerce.auth_service.data.entity.RefreshToken;
 import com.coffecommerce.auth_service.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,6 +1,6 @@
-package com.coffecommerce.auth_service.entity;
+package com.coffecommerce.auth_service.data.entity;
 
-import com.coffecommerce.auth_service.entity.abstracts.AbstractEntity;
+import com.coffecommerce.auth_service.data.entity.abstracts.AbstractEntity;
 import com.coffecommerce.auth_service.data.enums.ActivityStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

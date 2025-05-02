@@ -1,6 +1,6 @@
 package com.coffecommerce.auth_service.config;
 
-import com.coffecommerce.auth_service.entity.Role;
+import com.coffecommerce.auth_service.data.entity.Role;
 import com.coffecommerce.auth_service.data.enums.RoleType;
 import com.coffecommerce.auth_service.repository.RoleRepository;
 import jakarta.annotation.PostConstruct;

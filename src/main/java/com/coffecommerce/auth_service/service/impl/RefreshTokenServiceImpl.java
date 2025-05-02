@@ -1,9 +1,11 @@
 package com.coffecommerce.auth_service.service.impl;
 
+import com.coffecommerce.auth_service.data.entity.Seller;
 import com.coffecommerce.auth_service.data.enums.RefreshTokenStatus;
+import com.coffecommerce.auth_service.data.enums.RoleType;
 import com.coffecommerce.auth_service.data.util.SecurityUtil;
-import com.coffecommerce.auth_service.entity.RefreshToken;
-import com.coffecommerce.auth_service.entity.User;
+import com.coffecommerce.auth_service.data.entity.RefreshToken;
+import com.coffecommerce.auth_service.data.entity.User;
 import com.coffecommerce.auth_service.exception.AppException;
 import com.coffecommerce.auth_service.repository.RefreshTokenRepository;
 import com.coffecommerce.auth_service.security.JwtTokenProvider;
@@ -21,6 +23,23 @@ import java.util.stream.Collectors;
 public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtTokenProvider jwtTokenProvider;
+
+    @Override
+    public RefreshToken generateRefreshTokenSeller(Seller seller) {
+        invalidateAllActiveTokensSeller(seller);
+
+        String token = jwtTokenProvider.generateRefreshToken(
+                seller.getEmail(), Set.of(RoleType.SELLER.name()));
+
+        RefreshToken refreshToken = RefreshToken.builder()
+                .token(token)
+                .seller(seller)
+                .expiryDate(LocalDateTime.now().plus(Duration.ofMillis(jwtTokenProvider.getRefreshTokenExpiration())))
+                .status(RefreshTokenStatus.ACTIVE)
+                .build();
+
+        return refreshTokenRepository.save(refreshToken);
+    }
 
     @Override
     public RefreshToken generateRefreshToken(User user) {
@@ -87,4 +106,13 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                     refreshTokenRepository.save(token);
                 });
     }
+
+    private void invalidateAllActiveTokensSeller(Seller seller) {
+        refreshTokenRepository.findAllBySellerAndStatus(seller, RefreshTokenStatus.ACTIVE)
+                .forEach(token -> {
+                    token.setStatus(RefreshTokenStatus.EXPIRED);
+                    refreshTokenRepository.save(token);
+                });
+    }
+
 }

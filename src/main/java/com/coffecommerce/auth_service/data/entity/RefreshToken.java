@@ -1,7 +1,7 @@
-package com.coffecommerce.auth_service.entity;
+package com.coffecommerce.auth_service.data.entity;
 
 import com.coffecommerce.auth_service.data.enums.RefreshTokenStatus;
-import com.coffecommerce.auth_service.entity.abstracts.AbstractEntity;
+import com.coffecommerce.auth_service.data.entity.abstracts.AbstractEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,6 +26,10 @@ public class RefreshToken extends AbstractEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id", nullable = false)
+    private Seller seller;
 
     @Column(nullable = false)
     private LocalDateTime expiryDate;
